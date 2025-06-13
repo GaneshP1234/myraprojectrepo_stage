@@ -1,0 +1,36 @@
+name: HashiCorpDemo_myraprojectrepo_stage_workflow2
+on:
+  push:
+    branches:
+      - main
+jobs:
+  get-secret:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-latest
+    name: get-secret
+    steps:
+      - name: Import Secrets
+        id: import-secrets
+        uses: hashicorp/vault-action@v3.3.0
+        with:
+          url: https://ra-vault-cluster-public-vault-193294ff.3b9e56d2.z1.hashicorp.cloud:8200
+          path: jwt-stage-actions
+          role: auth.jwt.stage_role
+          method : jwt
+          exportToken: true
+          exportEnv: true
+          namespace: admin
+          secrets: |
+            GEBS/data/repo:myraprojectrepo_stage/workflow:HashiCorpDemo_myraprojectrepo_stage secretkey | APPSECRET ;
+      - name: Step following 'Import Secrets'
+        run: |
+          echo '${{ toJson(steps.import-secrets.outputs) }}' > secrets.json
+          cat ./secrets.json
+          #echo 'For bash'
+          APPSECRET="${{ env.APPSECRET }}"
+          echo "Stored Output: $APPSECRET"
+          #echo 'for windows'         
+          #$APPSECRET = "${{ env.APPSECRET }}"
+          #echo "Stored Output: $APPSECRET"
