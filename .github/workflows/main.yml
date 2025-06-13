@@ -17,14 +17,14 @@ jobs:
         uses: hashicorp/vault-action@v3.3.0
         with:
           url: https://ra-vault-cluster-public-vault-193294ff.3b9e56d2.z1.hashicorp.cloud:8200
-          path: jwt-github-actions
-          role: auth.jwt.app1.workflow1_role
+          path: jwt-stage-actions
+          role: auth.jwt.stage_role
           method : jwt
           exportToken: true
           exportEnv: true
           namespace: admin
           secrets: |
-            myraproject/data/test secretkey | APPSECRET ;
+            GEBS/data/repo:myraprojectrepo_stage/workflow:HashiCorpDemo_myraprojectrepo_stage secretkey | APPSECRET ;
       - name: Step following 'Import Secrets'
         run: |
           echo '${{ toJson(steps.import-secrets.outputs) }}' > secrets.json
